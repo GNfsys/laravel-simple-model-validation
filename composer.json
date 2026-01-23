@@ -1,0 +1,14 @@
+{
+    "name": "gnfsys/laravel-simple-model-validation",
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0|^12.0"
+    },
+    "license": "MIT-0",
+    "autoload": {
+        "psr-4": {
+            "GNfsys\\ModelValidation\\": "src/"
+        }
+    }
+}
