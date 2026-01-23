@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GNfsys\ModelValidation;
 
-
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
