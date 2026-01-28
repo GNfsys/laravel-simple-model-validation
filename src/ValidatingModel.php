@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use Exception;
 
 abstract class ValidatingModel extends Model
 {
@@ -33,14 +34,18 @@ abstract class ValidatingModel extends Model
      *
      * @return array<mixed>
      *
-     * @throws ValidationException
+     * @throws Exception
      */
     final public function validate(): array
     {
-        return $this->make()->validate();
+        try {
+            return $this->make()->validate();
+        } catch (ValidationException $exception) {
+            throw new ModelValidationException($exception);
+        }
     }
 
-    /** @throws ValidationException */
+    /** @throws Exception */
     final public function check(): void
     {
         $validator = $this->make();
@@ -48,7 +53,7 @@ abstract class ValidatingModel extends Model
         if ($validator->fails()) {
             $exceptionClass = $validator->getException();
 
-            throw new $exceptionClass($validator);
+            throw new ModelValidationException(new $exceptionClass($validator));
         }
     }
 
@@ -82,9 +87,11 @@ abstract class ValidatingModel extends Model
 
         $this->validateOnSave = false;
 
-        $saved = $this->save($options);
-
-        $this->validateOnSave = $originalValue;
+        try {
+            $saved = $this->save($options);
+        } finally {
+            $this->validateOnSave = $originalValue;
+        }
 
         return $saved;
     }
