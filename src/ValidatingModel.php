@@ -35,13 +35,13 @@ abstract class ValidatingModel extends Model
      *
      * @throws ValidationException
      */
-    final protected function validate(): array
+    final public function validate(): array
     {
         return $this->make()->validate();
     }
 
     /** @throws ValidationException */
-    final protected function check(): void
+    final public function check(): void
     {
         $validator = $this->make();
 
@@ -52,12 +52,12 @@ abstract class ValidatingModel extends Model
         }
     }
 
-    final protected function isValid(): bool
+    final public function isValid(): bool
     {
         return $this->make()->passes();
     }
 
-    final protected function isInvalid(): bool
+    final public function isInvalid(): bool
     {
         return !$this->isValid();
     }
@@ -76,7 +76,7 @@ abstract class ValidatingModel extends Model
     }
 
     /** @param array<non-empty-string, mixed> $options */
-    final protected function saveWithoutValidation(array $options = []): bool
+    final public function saveWithoutValidation(array $options = []): bool
     {
         $originalValue = $this->validateOnSave;
 
