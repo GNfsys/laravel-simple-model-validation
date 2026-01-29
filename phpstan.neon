@@ -1,4 +1,6 @@
 parameters:
+    checkModelProperties: true
+
     paths:
         - src/
 

@@ -27,7 +27,13 @@ abstract class ValidatingModel extends Model
 
     private function make(): Validator
     {
-        return ValidatorFacade::make($this->attributesToArray(), $this->rules());
+        $attributes = $this->attributesToArray();
+
+        $rules = $this->exists
+            ? array_intersect_key($this->rules(), $attributes)
+            : $this->rules();
+
+        return ValidatorFacade::make($attributes, $rules);
     }
 
     /**
@@ -65,7 +71,7 @@ abstract class ValidatingModel extends Model
 
     final public function isInvalid(): bool
     {
-        return !$this->isValid();
+        return ! $this->isValid();
     }
 
     protected static function booted(): void
