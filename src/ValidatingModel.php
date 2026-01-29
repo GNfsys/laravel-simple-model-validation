@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace GNfsys\ModelValidation;
 
+use Exception;
+use GNfsys\ModelValidation\Exceptions\ModelValidationException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
-use Exception;
 
 abstract class ValidatingModel extends Model
 {

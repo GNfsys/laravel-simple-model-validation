@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GNfsys\ModelValidation;
+namespace GNfsys\ModelValidation\Exceptions;
 
 use Exception;
 use Illuminate\Validation\ValidationException;
@@ -15,15 +15,17 @@ final class ModelValidationException extends Exception
 {
     public function __construct(private readonly ValidationException|string $exception)
     {
-        if ($exception instanceof ValidationException) {
-            parent::__construct(
-                $this->exception->getMessage(),
-                $this->exception->getCode(),
-                $this->exception
-            );
-        } else {
+        if (is_string($this->exception)) {
             parent::__construct($this->exception);
+
+            return;
         }
+
+        parent::__construct(
+            $this->exception->getMessage(),
+            $this->exception->getCode(),
+            $this->exception
+        );
     }
 
     public function getValidationException(): ?ValidationException
