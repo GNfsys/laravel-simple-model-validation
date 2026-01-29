@@ -13,17 +13,21 @@ use Illuminate\Validation\ValidationException;
  */
 final class ModelValidationException extends Exception
 {
-    public function __construct(private readonly ValidationException $exception)
+    public function __construct(private readonly ValidationException|string $exception)
     {
-        parent::__construct(
-            $this->exception->getMessage(),
-            $this->exception->getCode(),
-            $this->exception
-        );
+        if ($exception instanceof ValidationException) {
+            parent::__construct(
+                $this->exception->getMessage(),
+                $this->exception->getCode(),
+                $this->exception
+            );
+        } else {
+            parent::__construct($this->exception);
+        }
     }
 
-    public function getValidationException(): ValidationException
+    public function getValidationException(): ?ValidationException
     {
-        return $this->exception;
+        return $this->exception instanceof ValidationException ? $this->exception : null;
     }
 }
