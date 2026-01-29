@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace GNfsys\ModelValidation;
 
-use Exception;
 use GNfsys\ModelValidation\Exceptions\ModelValidationException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
@@ -17,13 +16,22 @@ abstract class ValidatingModel extends Model
     protected bool $validateOnSave = true;
 
     /**
-     * Get the validation rules that apply to the model
+     * Get the validation rules that apply to the model.
      *
      * @return array<non-empty-string, ValidationRule|array<mixed>|string>
      *
      * @phpstan-return array<model-property<static>, ValidationRule|array<mixed>|string>
      */
     abstract protected function rules(): array;
+
+    /**
+     * Override this if you need extra checks after the model was validated.
+     * You can throw `ModelValidationException` to simulate a validation error.
+     */
+    protected function afterValidation(): void
+    {
+        //
+    }
 
     private function make(): Validator
     {
@@ -41,7 +49,7 @@ abstract class ValidatingModel extends Model
      *
      * @return array<mixed>
      *
-     * @throws Exception
+     * @throws ModelValidationException
      */
     final public function validate(): array
     {
@@ -52,7 +60,7 @@ abstract class ValidatingModel extends Model
         }
     }
 
-    /** @throws Exception */
+    /** @throws ModelValidationException */
     final public function check(): void
     {
         $validator = $this->make();
@@ -80,9 +88,7 @@ abstract class ValidatingModel extends Model
             if ($model->validateOnSave && $model->isDirty()) {
                 $model->check();
 
-                if (method_exists($model, 'afterValidation')) {
-                    $model->afterValidation();
-                }
+                $model->afterValidation();
             }
         });
     }
@@ -95,11 +101,9 @@ abstract class ValidatingModel extends Model
         $this->validateOnSave = false;
 
         try {
-            $saved = $this->save($options);
+            return $this->save($options);
         } finally {
             $this->validateOnSave = $originalValue;
         }
-
-        return $saved;
     }
 }
